@@ -711,6 +711,49 @@ PYBIND11_MODULE(_occ_events, m) {
           py::arg("include_event_invariants") = true);
 
   m.def(
+      "occ_event_orbit_to_json",
+      [](std::vector<occ_events::OccEvent> const &orbit,
+         occ_events::OccSystem const &system,
+         std::shared_ptr<occ_events::SymGroup const> const &factor_group,
+         std::vector<occ_events::OccEventRep> const &occevent_symgroup_rep,
+         bool include_cluster, bool include_cluster_occupation,
+         bool include_event_invariants, bool include_invariant_group,
+         bool include_equivalence_map) -> nlohmann::json {
+        occ_events::OccEventOutputOptions opt;
+        opt.include_cluster = include_cluster;
+        opt.include_cluster_occupation = include_cluster_occupation;
+        opt.include_event_invariants = include_event_invariants;
+        opt.include_invariant_group = include_invariant_group;
+        opt.include_equivalence_map = include_equivalence_map;
+        jsonParser json;
+        to_json(std::set<occ_events::OccEvent>(orbit.begin(), orbit.end()),
+                json, system, factor_group, occevent_symgroup_rep, opt);
+        return static_cast<nlohmann::json>(json);
+      },
+      R"pbdoc(
+      To json
+
+      Parameters
+      ----------
+      orbit_element : OccEvent
+          One OccEvent in the orbit
+
+      occevent_symgroup_rep: List[OccEventRep]
+          Symmetry group representation.
+
+      Returns
+      -------
+      orbit : List[OccEvent]
+          The orbit of OccEvent
+      )pbdoc",
+      py::arg("orbit"), py::arg("system"), py::arg("factor_group"),
+      py::arg("occevent_symgroup_rep"), py::arg("include_cluster") = true,
+      py::arg("include_cluster_occupation") = true,
+      py::arg("include_event_invariants") = true,
+      py::arg("include_invariant_group") = true,
+      py::arg("include_equivalence_map") = true);
+
+  m.def(
       "make_prim_periodic_orbit",
       [](occ_events::OccEvent const &orbit_element,
          std::vector<occ_events::OccEventRep> const &occevent_symgroup_rep) {

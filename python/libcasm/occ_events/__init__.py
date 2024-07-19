@@ -18,4 +18,5 @@ from ._occ_events import (
     make_occevent_symgroup_rep,
     make_occevent_symgroup_rep_from_existing,
     make_prim_periodic_orbit,
+    occ_event_orbit_to_json
 )
